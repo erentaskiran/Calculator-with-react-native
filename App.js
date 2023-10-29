@@ -1,21 +1,26 @@
 import React, { useState } from 'react';
-import { Button, StyleSheet, Text, View, SafeAreaView, TouchableOpacity } from 'react-native';
+import { Button, StyleSheet, Text, View, SafeAreaView, TouchableOpacity, TextInput } from 'react-native';
 
 export default function App() {
   const [answer, setAnswer] = useState('0');
-  const [count, setCount] = useState('');
-
+  const [result, setResult] = useState('');
+  const buttonTexts=['7','8','9','/','4','5','6','*','1','2','3','-','0','AC','=','+'];
   const addValue = (number) => {
     if (answer === '0') {
       setAnswer(number.toString());
-    } else {
+    }else if(number==='AC'){
+      clearAnswer();
+    } else if(number=='='){
+      evaluateExpression();
+    }
+    else {
       setAnswer(answer + number);
     }
   }
   const evaluateExpression = () => {
     try {
       const result = eval(answer);
-      setAnswer(result);
+      setResult(result);
 
     } catch (error) {
       console.error("Hesaplama hatası:", error);
@@ -26,47 +31,37 @@ export default function App() {
   }
   const clearAnswer = () => {
     setAnswer('0');
-    setCount('');
+    setResult('');
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={{ textAlign: "right", fontSize: 65,marginBottom:50 ,width:'90%',maxWidth:'100%',height:80,maxHeight:80}}>{answer}</Text>
-      
-      <View style={{ flexDirection: 'row' }}>
-        
-        <View style={styles.numberButtons}>
-          
-          <View style={styles.numberButtonsColumn}>
-            <TouchableOpacity style={styles.buttons} onPress={() => addValue(7)} ><Text style={styles.buttonsText}>7</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.buttons}onPress={() => addValue(4)} ><Text style={styles.buttonsText}>4</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.buttons}onPress={() => addValue(1)} ><Text style={styles.buttonsText}>1</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.buttons}onPress={() => addValue(0)} ><Text style={styles.buttonsText}>0</Text></TouchableOpacity>
-          </View>
-          <View style={styles.numberButtonsColumn}>
-            <TouchableOpacity style={styles.buttons}onPress={() => addValue(8)} ><Text style={styles.buttonsText}>8</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.buttons}onPress={() => addValue(5)} ><Text style={styles.buttonsText}>5</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.buttons}onPress={() => addValue(2)} ><Text style={styles.buttonsText}>2</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.buttons}onPress={() => addValue('.')} ><Text style={styles.buttonsText}>,</Text></TouchableOpacity>
-          </View>
-          <View style={styles.numberButtonsColumn}>
-            <TouchableOpacity style={styles.buttons}onPress={() => addValue(9)} ><Text style={styles.buttonsText}>9</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.buttons}onPress={() => addValue(6)} ><Text style={styles.buttonsText}>6</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.buttons}onPress={() => addValue(3)} ><Text style={styles.buttonsText}>3</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.buttons}title='=' color='black' onPress={evaluateExpression} ><Text style={styles.buttonsText}>=</Text></TouchableOpacity>
-          </View>
-        </View>
-        
-        <View style={styles.actionButtons}>
-          
-          <TouchableOpacity style={styles.buttons}onPress={() => addValue('+')} ><Text style={styles.buttonsText}>+</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.buttons}onPress={() => addValue('-')} ><Text style={styles.buttonsText}>-</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.buttons}onPress={() => addValue('*')} ><Text style={styles.buttonsText}>x</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.buttons}onPress={() => addValue('/')} ><Text style={styles.buttonsText}>÷</Text></TouchableOpacity>
-        </View>
-        
+      <View style={styles.resultContainer}>
+        <Text style={styles.resultText}>{result}</Text>
       </View>
-      <TouchableOpacity style={{width:'100%',textAlign:'center',padding:10}}onPress={clearAnswer} ><Text style={{fontSize:48, backgroundColor:'#DDDDDD', textAlign:'center'}}>AC</Text></TouchableOpacity>
+      <View style={styles.inputContainer} >
+        <TextInput
+        style={styles.inputText}
+        value={answer}
+        onChangeText={setAnswer}
+        keyboardType='numeric'
+        />
+      </View>
+      <View style={styles.buttonContainer}>
+        {['7','8','9','/','4','5','6','*','1','2','3','-','0','AC','=','+'].map(
+          (item,index)=>(
+            <TouchableOpacity
+            key={index}
+            style={styles.button}
+            onPress={()=>addValue(item)}
+            >
+              <Text style={styles.buttonText}>
+                {item}
+              </Text>
+            </TouchableOpacity>
+          )
+        )}
+      </View>
     </SafeAreaView>
   );
 }
@@ -74,33 +69,40 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'gray',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
-  numberButtons: {
-    flex: 3,
-    flexDirection: 'row',
+  resultContainer:{
+    flex:2,
+    justifyContent:'center',
+    alignItems:'flex-end',
   },
-  actionButtons: {
-    flex: 1,
-  },
-  numberButtonsColumn: {
-    flex: 1,
+  resultText:{
+    fontSize:40,
 
   },
-  buttons:{
+  inputContainer:{
+    flex:1,
+    justifyContent:'center',
+    alignItems:'flex-end',
+  },  
+  inputText:{
+    fontSize:30,
+  },
+  buttonContainer:{
+    flex:7,
+    flexDirection:'row',
+    flexWrap:'wrap',
+  },
+  button:{
+    fontSize:24,
+    width:'25%',
+    height:'20%',
+    justifyContent:'center',
     alignItems:'center',
-    display:'flex',
-    height:70,
-    
+    borderWidth:'1',
+    borderColor:'black',
+    color:'black',
   },
-  buttonsText:{
-    fontSize:48,
-    backgroundColor:'#DDDDDD',
-    width:'80%',
-    
-    textAlign:'center',
-
+  buttonText:{
+    fontSize:24,
   },
 });
