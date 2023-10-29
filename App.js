@@ -33,7 +33,6 @@ export default function App() {
     setAnswer('0');
     setResult('');
   }
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.resultContainer}>
@@ -48,7 +47,7 @@ export default function App() {
         />
       </View>
       <View style={styles.buttonContainer}>
-        {['7','8','9','/','4','5','6','*','1','2','3','-','0','AC','=','+'].map(
+        {buttonTexts.map(
           (item,index)=>(
             <TouchableOpacity
             key={index}
